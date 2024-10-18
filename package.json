@@ -14,6 +14,6 @@
   "private": true,
   "dependencies": {
     "fast-xml-parser": "^4.5.0",
-    "strong-soap": "^4.1.4"
+    "strong-soap": "^4.1.5"
   }
 }
