@@ -5,7 +5,7 @@ export class WTicketCommon extends WTicketBase {
   /** Returns relations based on the given params.
    * `relation` is undefined when multiple results are found
    * `relations` is undefined when an exact result was found **/
-  async listRelations(params: {
+  async listRelations(params?: {
     searchKey?: string
     changedSince?: string
     limit?: number
@@ -13,7 +13,7 @@ export class WTicketCommon extends WTicketBase {
   }): Promise<{ relation?: RelationSearch, relations?: RelationSearch[] }> {
     const name = "relationLookup";
     const body = {
-      searchKey: params.searchKey,
+      searchKey: params?.searchKey,
       includeNonDebtors: true,
       ...params
     }

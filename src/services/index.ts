@@ -1,10 +1,15 @@
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
-import { WTicketClientConfig } from "../client";
 
 type WTicketBody = Record<string, string | number | boolean | object | undefined>
 
 export class WTicketBase {
-  constructor(protected readonly config: WTicketClientConfig) {}
+  constructor(protected readonly config: {
+    url: string
+    username: string
+    password: Promise<string>
+    nonce: string
+    created: string
+  }) {}
 
   protected async request(action: string, params: WTicketBody, type: "com" | "rel", method: "get" | "edit" = "get") {
     const response = await fetch(this.config.url, {
@@ -12,12 +17,13 @@ export class WTicketBase {
       headers: {
         "Content-Type": "text/xml;charset=UTF-8"
       },
-      body: method === "get" ? this.createRequestBody(action, params, type) : this.createEditBody(action, params)
+      body: method === "get" ? await this.createRequestBody(action, params, type) : await this.createEditBody(action, params)
     })
     if (response.ok) {
       return await response.text();
     } else {
       console.error(await response.text())
+      console.log(response)
       throw Error(response.statusText);
     }
   }
@@ -45,7 +51,7 @@ export class WTicketBase {
     return this.createWSS(name, type, getBody());
   }
 
-  private createWSS(name: string, type: "com" | "rel", body: WTicketBody, wrap = true) {
+  private async createWSS(name: string, type: "com" | "rel", body: WTicketBody, wrap = true) {
     const builder = new XMLBuilder({
       ignoreAttributes: false,
       attributeNamePrefix: "$",
@@ -77,7 +83,7 @@ export class WTicketBase {
               "$wsu:Id": "UsernameToken-F4BDE120A459153167172805252411826",
               "wsse:Username": this.config.username,
               "wsse:Password": {
-                "#value": this.config.password,
+                "#value": await this.config.password,
                 "$Type": "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest"
               },
               "wsse:Nonce": {

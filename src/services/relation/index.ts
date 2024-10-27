@@ -39,12 +39,21 @@ export class WTicketRelation extends WTicketBase {
     return relation
   }
 
-  async create(relation: RelationEdit) {
-    const name = "createRelation"
-    await this.request(name, {
-      "rel:relation": {
+  // async create(relation: RelationEdit) {
+  //   const name = "createRelation"
+  //   await this.request(name, {
+  //     "rel:relation": {
+  //
+  //     }
+  //   }, "rel", "edit");
+  // }
 
-      }
-    }, "rel", "edit");
+  async update(id: number, relation: RelationEdit) {
+    const name = "updateRelation";
+    const response = await this.request(name, {
+      "rel:gc1rel_unid": id,
+      "rel:relation": {}
+    }, "rel", "edit")
+    console.log(response)
   }
 }
