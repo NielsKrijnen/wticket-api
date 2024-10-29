@@ -4,3 +4,4 @@ tsup.config.ts
 package-lock.json
 .github
 src
+.idea
