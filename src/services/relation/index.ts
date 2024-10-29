@@ -1,5 +1,5 @@
 import { WTicketBase } from "../index";
-import { Relation, RelationEdit, RelationXML } from "./types";
+import { Relation, RelationXML } from "./types";
 
 export class WTicketRelation extends WTicketBase {
   async get(id: number) {
@@ -37,23 +37,5 @@ export class WTicketRelation extends WTicketBase {
       blockMail: xmlRelation["ns3:blockMail"]
     }
     return relation
-  }
-
-  // async create(relation: RelationEdit) {
-  //   const name = "createRelation"
-  //   await this.request(name, {
-  //     "rel:relation": {
-  //
-  //     }
-  //   }, "rel", "edit");
-  // }
-
-  async update(id: number, relation: RelationEdit) {
-    const name = "updateRelation";
-    const response = await this.request(name, {
-      "rel:gc1rel_unid": id,
-      "rel:relation": {}
-    }, "rel", "edit")
-    console.log(response)
   }
 }

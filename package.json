@@ -1,6 +1,6 @@
 {
   "name": "wticket-api",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,7 +12,6 @@
     "tsup": "^8.3.0",
     "typescript": "^5.6.3"
   },
-  "private": true,
   "dependencies": {
     "fast-xml-parser": "^4.5.0",
     "strong-soap": "^4.1.5"
