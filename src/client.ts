@@ -6,6 +6,7 @@ type WTicketAPIConfig = {
   username: string
   password: string
   url: string
+  crypto?: Crypto
 }
 
 export class WTicketAPI {
@@ -14,13 +15,15 @@ export class WTicketAPI {
   private readonly url: string;
   private readonly nonce: string;
   private readonly created: string;
+  private readonly crypto: Crypto;
 
   constructor(protected readonly config: WTicketAPIConfig) {
     this.url = config.url
     this.username = config.username
+    this.crypto = config.crypto ?? crypto as Crypto
 
     const array = new Uint8Array(16);
-    crypto.getRandomValues(array)
+    this.crypto.getRandomValues(array)
     this.nonce = btoa(String.fromCharCode(...array))
     this.created = new Date().toISOString()
 
@@ -31,7 +34,7 @@ export class WTicketAPI {
     const encoder = new TextEncoder()
     const data = new Uint8Array([...nonce, ...encoder.encode(created + password)])
 
-    const hashBuffer = await crypto.subtle.digest("SHA-1", data)
+    const hashBuffer = await this.crypto.subtle.digest("SHA-1", data)
     const hashArray = Array.from(new Uint8Array(hashBuffer))
     return btoa(String.fromCharCode(...hashArray))
   }
