@@ -1,10 +1,10 @@
 import { WTicketBase } from "../index";
-import { Relation, RelationXML } from "./types";
+import { Relation, RelationEdit, RelationXML } from "./types";
 
 export class WTicketRelation extends WTicketBase {
   async get(id: number) {
     const name = "retrieveRelation";
-    const xml = this.xmlParse(await this.request(name, { "gc1rel_unid": id }, "rel"), name);
+    const xml = this.xmlParse(await this.request(name, { gc1rel_unid: id }, "rel"), name);
     const xmlRelation = xml["ns2:relation"] as RelationXML;
     const relation: Relation = {
       number: xmlRelation["ns3:number"],
@@ -37,5 +37,23 @@ export class WTicketRelation extends WTicketBase {
       blockMail: xmlRelation["ns3:blockMail"]
     }
     return relation
+  }
+  async update(id: number, relation: RelationEdit) {
+    const name = "updateRelation";
+    const getBody = (object: Record<string, string | number | boolean | Record<string, any>>) => {
+      const body: Record<string, string | number | object> = {}
+      for (const key in object) {
+        const xml = `glob:${key}`;
+        if (object[key]) {
+          if (typeof object[key] === "object") body[xml] = getBody(object[key])
+          else body[xml] = object[key].toString()
+        }
+      }
+      return body
+    }
+    this.xmlParse(await this.request(name, {
+      gc1rel_unid: id,
+      relation: getBody(relation)
+    }, "rel"), name);
   }
 }

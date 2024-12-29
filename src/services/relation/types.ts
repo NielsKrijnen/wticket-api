@@ -1,5 +1,3 @@
-import { RelationSearch } from "../common/types";
-
 export type Relation = {
   number: number
   type: string

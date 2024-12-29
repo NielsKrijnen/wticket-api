@@ -11,13 +11,13 @@ export class WTicketBase {
     created: string
   }) {}
 
-  protected async request(action: string, params: WTicketBody, type: "com" | "rel", method: "get" | "edit" = "get") {
+  protected async request(action: string, params: WTicketBody, type: "com" | "rel") {
     const response = await fetch(this.config.url, {
       method: "POST",
       headers: {
         "Content-Type": "text/xml;charset=UTF-8"
       },
-      body: method === "get" ? await this.createRequestBody(action, params, type) : await this.createEditBody(action, params)
+      body: await this.createRequestBody(action, params, type)
     })
     if (response.ok) {
       return await response.text();
@@ -34,16 +34,12 @@ export class WTicketBase {
     return parsed["SOAP-ENV:Envelope"]["SOAP-ENV:Body"][`ns2:${name}-response`];
   }
 
-  private createEditBody(name: string, body: WTicketBody) {
-    return this.createWSS(name, "rel", body, false);
-  }
-
   private createRequestBody(name: string, params: WTicketBody, type: "com" | "rel") {
     const getBody = () => {
-      const body: Record<string, string> = {}
+      const body: Record<string, string | number | true | object> = {}
       for (const key in params) {
         const xml = `${type}:${key}`;
-        if (params[key]) body[xml] = params[key].toString()
+        if (params[key]) body[xml] = params[key]
       }
       return body
     }
@@ -73,6 +69,7 @@ export class WTicketBase {
     return builder.build({
       "soapenv:Envelope": {
         ...schema,
+        "$xmlns:glob": "http://www.atsc.nl/schemas/global",
         "$xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
         "soapenv:Header": {
           "wsse:Security": {
